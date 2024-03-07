@@ -1,10 +1,22 @@
 const puppeteer = require('puppeteer');
+require("dotenv").config();
 const express = require('express');
 
 const hideBrowser = true;
 
 async function scrape(url) {
-    const browser = await puppeteer.launch({ headless: hideBrowser });//Launch the headless browser
+    const browser = await puppeteer.launch({ headless: hideBrowser }, {
+        args: [
+            "--disable-setuid-sandbox",
+            "--no-sandbox",
+            "--single-process",
+            "--no-zygote",
+        ],
+        executablePath:
+            process.env.NODE_ENV === "production"
+                ? process.env.PUPPETEER_EXECUTABLE_PATH
+                : puppeteer.executablePath(),
+    });//Launch the headless browser
     const page = await browser.newPage();//open a new page
     await page.goto(url, { timeout: 120 * 1000 });//go to the movie url in the new page
 
