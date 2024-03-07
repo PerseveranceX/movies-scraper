@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Front-End</title>
+</head>
+
+<body>
+    <input type="url" name="Movie Url" id="url">
+    <button id="parse">Get watching URL</button>
+    <div id="result">Result here</div>
+
+    <script>
+        let button = document.querySelector('button#parse');
+        let result = document.querySelector('div#result');
+
+        button.addEventListener('click', () => {
+            result.textContent = "Getting the URL, please wait...";
+            let url = document.querySelector('input#url').value;
+            fetch('/movies', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'movieURL': url })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response from the backend
+                    result.textContent = `Movie URL: ${data.movieURL}`;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    result.textContent = `Error, ${error}`;
+                });
+        });
+    </script>
+</body>
+
+</html>
